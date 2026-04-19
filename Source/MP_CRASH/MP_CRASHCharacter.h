@@ -60,6 +60,8 @@ public:
 
 	virtual void GrantArmor_Implementation(float ArmorAmount) override;
 
+	virtual void PickUpItem_Implementation() override;
+
 protected:
 
 	/** Initialize input action bindings */
@@ -110,7 +112,16 @@ public:
 private:
 
 	//2. add UPROPERTY Macro with Replicated specifier
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_Armor)
 	float Armor;
+
+	UPROPERTY(ReplicatedUsing = OnRep_ItemCount)
+	int32 ItemCount;
+
+	UFUNCTION()
+	void OnRep_Armor();
+
+	UFUNCTION()
+	void OnRep_ItemCount(int32 PreviousValue);
 };
 

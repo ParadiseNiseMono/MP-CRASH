@@ -62,6 +62,11 @@ void AMP_CRASHCharacter::GrantArmor_Implementation(float ArmorAmount)
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("ArmorAmount = %f"), Armor));
 }
 
+void AMP_CRASHCharacter::PickUpItem_Implementation()
+{
+	ItemCount++;
+}
+
 void AMP_CRASHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
@@ -150,9 +155,21 @@ void AMP_CRASHCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProper
 
 	//3. DOREPLIFETIME
 	DOREPLIFETIME(ThisClass, Armor);
+	DOREPLIFETIME(ThisClass, ItemCount);
 }
 
 float AMP_CRASHCharacter::GetArmorValue()
 {
 	return Armor;
+}
+
+void AMP_CRASHCharacter::OnRep_Armor()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("OnRep ArmorAmount = %f"), Armor));
+}
+
+void AMP_CRASHCharacter::OnRep_ItemCount(int32 PreviousValue)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("OnRep PreviousValue ItemCount = %d"), PreviousValue));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("OnRep ItemCount = %d"), ItemCount));
 }
