@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "Public/Interaction/MP_Player.h"
 #include "MP_CRASHCharacter.generated.h"
 
 class USpringArmComponent;
@@ -19,7 +20,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  *  Implements a controllable orbiting camera
  */
 UCLASS(abstract)
-class AMP_CRASHCharacter : public ACharacter
+class AMP_CRASHCharacter : public ACharacter, public IMP_Player
 {
 	GENERATED_BODY()
 
@@ -52,7 +53,12 @@ protected:
 public:
 
 	/** Constructor */
-	AMP_CRASHCharacter();	
+	AMP_CRASHCharacter();
+
+	/** IMP_Player Interface*/
+	virtual USkeletalMeshComponent* GetSkeletalMesh_Implementation() const override;
+
+	virtual void GrantArmor_Implementation(float ArmorAmount) override;
 
 protected:
 
@@ -92,5 +98,19 @@ public:
 
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	/////////// Crash Course////////////
+
+public:
+	// 1. override GetLifetimeReplicatedProps
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UFUNCTION(BlueprintPure)
+	float GetArmorValue();
+private:
+
+	//2. add UPROPERTY Macro with Replicated specifier
+	UPROPERTY(Replicated)
+	float Armor;
 };
 

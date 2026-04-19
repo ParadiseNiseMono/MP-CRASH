@@ -22,4 +22,10 @@ class MP_CRASH_API IMP_Player
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	USkeletalMeshComponent* GetSkeletalMesh() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void GrantArmor(float ArmorAmount);
 };

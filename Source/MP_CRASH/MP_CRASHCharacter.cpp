@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "MP_CRASH.h"
+#include "Net/UnrealNetwork.h"
 
 AMP_CRASHCharacter::AMP_CRASHCharacter()
 {
@@ -48,6 +49,17 @@ AMP_CRASHCharacter::AMP_CRASHCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+}
+
+USkeletalMeshComponent* AMP_CRASHCharacter::GetSkeletalMesh_Implementation() const
+{
+	return GetMesh();
+}
+
+void AMP_CRASHCharacter::GrantArmor_Implementation(float ArmorAmount)
+{
+	Armor = ArmorAmount;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("ArmorAmount = %f"), Armor));
 }
 
 void AMP_CRASHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -130,4 +142,17 @@ void AMP_CRASHCharacter::DoJumpEnd()
 {
 	// signal the character to stop jumping
 	StopJumping();
+}
+
+void AMP_CRASHCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//3. DOREPLIFETIME
+	DOREPLIFETIME(ThisClass, Armor);
+}
+
+float AMP_CRASHCharacter::GetArmorValue()
+{
+	return Armor;
 }

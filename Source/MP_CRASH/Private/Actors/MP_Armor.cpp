@@ -4,7 +4,7 @@
 #include "Public/Actors/MP_Armor.h"
 
 #include "Components/SphereComponent.h"
-#include "GameFramework/Character.h"
+#include "Public/Interaction/MP_Player.h"
 
 
 AMP_Armor::AMP_Armor()
@@ -35,12 +35,16 @@ void AMP_Armor::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	ACharacter* OverlappedCharacter = Cast<ACharacter>(OtherActor);
+	if (!OtherActor->HasAuthority()) return;
 
-	if (HasAuthority() && IsValid(OverlappedCharacter))
+	if (OtherActor->Implements<UMP_Player>())
 	{
-		SphereMesh->AttachToComponent(OverlappedCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "S_Head");
-		CubeMesh->AttachToComponent(OverlappedCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "S_Breast");
-	}	
+		USkeletalMeshComponent* Mesh = IMP_Player::Execute_GetSkeletalMesh(OtherActor);
+
+		SphereMesh->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "S_Head");
+		CubeMesh->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "S_Breast");
+
+		IMP_Player::Execute_GrantArmor(OtherActor, ArmorValue);
+	}
 }
 
