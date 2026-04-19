@@ -154,8 +154,8 @@ void AMP_CRASHCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProper
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	//3. DOREPLIFETIME
-	DOREPLIFETIME(ThisClass, Armor);
-	DOREPLIFETIME(ThisClass, ItemCount);
+	DOREPLIFETIME_CONDITION(ThisClass, Armor, COND_AutonomousOnly);
+	DOREPLIFETIME_CONDITION(ThisClass, ItemCount, COND_AutonomousOnly);
 }
 
 float AMP_CRASHCharacter::GetArmorValue()
