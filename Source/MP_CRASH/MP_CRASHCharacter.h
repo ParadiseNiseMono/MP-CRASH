@@ -50,6 +50,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* MouseLookAction;
 
+	/** GenericAction Action is test only*/
+	UPROPERTY(EditAnywhere, Category="Input")
+	UInputAction* GenericAction;
+
 public:
 
 	/** Constructor */
@@ -106,6 +110,7 @@ public:
 public:
 	// 1. override GetLifetimeReplicatedProps
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker) override;
 
 	UFUNCTION(BlueprintPure)
 	float GetArmorValue();
@@ -116,12 +121,17 @@ private:
 	float Armor;
 
 	UPROPERTY(ReplicatedUsing = OnRep_ItemCount)
-	int32 ItemCount;
+	int32 PickupCount;
 
 	UFUNCTION()
 	void OnRep_Armor();
 
 	UFUNCTION()
 	void OnRep_ItemCount(int32 PreviousValue);
+
+	bool bReplicatePickupCount = false;
+
+	UFUNCTION()
+	void OnGeneric();
 };
 

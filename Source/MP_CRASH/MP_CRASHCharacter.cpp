@@ -64,7 +64,7 @@ void AMP_CRASHCharacter::GrantArmor_Implementation(float ArmorAmount)
 
 void AMP_CRASHCharacter::PickUpItem_Implementation()
 {
-	ItemCount++;
+	PickupCount++;
 }
 
 void AMP_CRASHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -82,6 +82,8 @@ void AMP_CRASHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMP_CRASHCharacter::Look);
+
+		EnhancedInputComponent->BindAction(GenericAction, ETriggerEvent::Started, this, &AMP_CRASHCharacter::OnGeneric);
 	}
 	else
 	{
@@ -155,7 +157,15 @@ void AMP_CRASHCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProper
 
 	//3. DOREPLIFETIME
 	DOREPLIFETIME_CONDITION(ThisClass, Armor, COND_AutonomousOnly);
-	DOREPLIFETIME_CONDITION(ThisClass, ItemCount, COND_AutonomousOnly);
+	DOREPLIFETIME_CONDITION(ThisClass, PickupCount, COND_Custom);
+}
+
+void AMP_CRASHCharacter::PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker)
+{
+	Super::PreReplication(ChangedPropertyTracker);
+	
+	//如果 bReplicatePickupCount 改變數值，PickupCount 的同步狀態也會跟著改變。注意：該布林值只看伺服器端的狀態。
+	DOREPLIFETIME_ACTIVE_OVERRIDE(ThisClass, PickupCount, bReplicatePickupCount);
 }
 
 float AMP_CRASHCharacter::GetArmorValue()
@@ -171,5 +181,12 @@ void AMP_CRASHCharacter::OnRep_Armor()
 void AMP_CRASHCharacter::OnRep_ItemCount(int32 PreviousValue)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("OnRep PreviousValue ItemCount = %d"), PreviousValue));
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("OnRep ItemCount = %d"), ItemCount));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("OnRep ItemCount = %d"), PickupCount));
+}
+
+void AMP_CRASHCharacter::OnGeneric()
+{
+	bReplicatePickupCount = !bReplicatePickupCount;
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("bReplicatePickupCount = %d"), bReplicatePickupCount));
 }

@@ -18,7 +18,8 @@ public class MP_CRASH : ModuleRules
 			"StateTreeModule",
 			"GameplayStateTreeModule",
 			"UMG",
-			"Slate"
+			"Slate",
+			"NetCore"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
