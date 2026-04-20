@@ -28,16 +28,37 @@ void AMP_RPCActor::Client_PrintMessage_Implementation(const FString& Message)
 		);
 }
 
+void AMP_RPCActor::Server_PrintMessage_Implementation(const FString& Message)
+{
+	FString PrintMessage = HasAuthority() ? TEXT("Server: ") : TEXT("Client: ");
+
+	PrintMessage += Message;
+	
+	GEngine->AddOnScreenDebugMessage(
+		-1,
+		5.f,
+		FColor::Purple,
+		PrintMessage
+		);
+}
+
 // Called when the game starts or when spawned
 void AMP_RPCActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (HasAuthority())
+	/*if (HasAuthority())
 	{
 		Client_PrintMessage(TEXT("This should run on the client(RPCActor)"));
-	}
+	}*/
 	
+}
+
+void AMP_RPCActor::OnRep_Owner()
+{
+	Super::OnRep_Owner();
+
+	Server_PrintMessage("OnRep_Owner");
 }
 
 
