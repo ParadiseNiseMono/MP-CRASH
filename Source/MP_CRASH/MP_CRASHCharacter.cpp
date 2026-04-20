@@ -14,6 +14,7 @@
 #include "Components/MP_HealthComponent.h"
 #include "GameState/MP_GameState.h"
 #include "Net/UnrealNetwork.h"
+#include "PlayerState/MP_PlayerState.h"
 
 AMP_CRASHCharacter::AMP_CRASHCharacter()
 {
@@ -72,6 +73,13 @@ void AMP_CRASHCharacter::PickUpItem_Implementation()
 
 	if (!IsValid(HealthComponent)) return;
 	HealthComponent->IncreaseHealth();
+
+	AMP_PlayerState* MP_PlayerState = Cast<AMP_PlayerState>(GetPlayerState());
+
+	if (IsValid(MP_PlayerState))
+	{
+		MP_PlayerState->IncreaseNumPickups();
+	}
 }
 
 void AMP_CRASHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -212,12 +220,25 @@ void AMP_CRASHCharacter::OnGeneric()
 
 	/*Server_PrintMessage("");*/
 
-	AMP_GameState* GameState = Cast<AMP_GameState>(GetWorld()->GetGameState());
+	/*AMP_GameState* GameState = Cast<AMP_GameState>(GetWorld()->GetGameState());
 
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController && GameState)
 	{
 		GameState->CheckPlayerTeam(PlayerController);
+	}*/
+
+	AMP_PlayerState* MP_PlayerState = Cast<AMP_PlayerState>(GetPlayerState());
+
+	if (IsValid(MP_PlayerState))
+	{
+		FString Message = FString::Printf(TEXT("Pickup Count: %d"), MP_PlayerState->GetNumPickups());
+		GEngine->AddOnScreenDebugMessage(
+		-1,
+		5.f,
+		FColor::Cyan,
+		Message
+		);
 	}
 }
 
