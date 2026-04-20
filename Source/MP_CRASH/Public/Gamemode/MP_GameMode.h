@@ -22,6 +22,8 @@ protected:
 	
 	virtual void StartMatch() override;
 
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+
 	UPROPERTY(EditDefaultsOnly)
 	float StartMatchDelay;
 

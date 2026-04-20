@@ -12,6 +12,7 @@
 #include "InputActionValue.h"
 #include "MP_CRASH.h"
 #include "Components/MP_HealthComponent.h"
+#include "GameState/MP_GameState.h"
 #include "Net/UnrealNetwork.h"
 
 AMP_CRASHCharacter::AMP_CRASHCharacter()
@@ -209,7 +210,15 @@ void AMP_CRASHCharacter::OnGeneric()
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("bRepNotifyHealth = %d"), HealthComponent->GetRepNotifyHealth()));*/
 
-	Server_PrintMessage("");
+	/*Server_PrintMessage("");*/
+
+	AMP_GameState* GameState = Cast<AMP_GameState>(GetWorld()->GetGameState());
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController && GameState)
+	{
+		GameState->CheckPlayerTeam(PlayerController);
+	}
 }
 
 void AMP_CRASHCharacter::Server_PrintMessage_Implementation(const FString& Message)

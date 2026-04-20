@@ -3,6 +3,8 @@
 
 #include "Public/Gamemode/MP_GameMode.h"
 
+#include "GameState/MP_GameState.h"
+
 
 AMP_GameMode::AMP_GameMode()
 {
@@ -27,4 +29,16 @@ void AMP_GameMode::StartMatch()
 		FColor::Green,
 		TEXT("Start Match")
 		);
+}
+
+void AMP_GameMode::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+
+	AMP_GameState* MP_GameState = GetGameState<AMP_GameState>();
+
+	if (MP_GameState)
+	{
+		MP_GameState->AddPlayerControllerToTeams(NewPlayer);
+	}
 }
