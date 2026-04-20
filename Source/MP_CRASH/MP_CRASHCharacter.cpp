@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "MP_CRASH.h"
+#include "Components/MP_HealthComponent.h"
 #include "Net/UnrealNetwork.h"
 
 AMP_CRASHCharacter::AMP_CRASHCharacter()
@@ -47,6 +48,8 @@ AMP_CRASHCharacter::AMP_CRASHCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
+	HealthComponent = CreateDefaultSubobject<UMP_HealthComponent>("HealthComponent");
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -65,6 +68,9 @@ void AMP_CRASHCharacter::GrantArmor_Implementation(float ArmorAmount)
 void AMP_CRASHCharacter::PickUpItem_Implementation()
 {
 	PickupCount++;
+
+	if (!IsValid(HealthComponent)) return;
+	HealthComponent->IncreaseHealth();
 }
 
 void AMP_CRASHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -186,7 +192,12 @@ void AMP_CRASHCharacter::OnRep_ItemCount(int32 PreviousValue)
 
 void AMP_CRASHCharacter::OnGeneric()
 {
-	bReplicatePickupCount = !bReplicatePickupCount;
+	/*bReplicatePickupCount = !bReplicatePickupCount;
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("bReplicatePickupCount = %d"), bReplicatePickupCount));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("bReplicatePickupCount = %d"), bReplicatePickupCount));*/
+
+	if (!IsValid(HealthComponent)) return;
+	HealthComponent->SetRepNotifyHealth(!HealthComponent->GetRepNotifyHealth());
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("bRepNotifyHealth = %d"), HealthComponent->GetRepNotifyHealth()));
 }

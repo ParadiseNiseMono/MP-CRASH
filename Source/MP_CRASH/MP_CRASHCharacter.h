@@ -8,6 +8,7 @@
 #include "Public/Interaction/MP_Player.h"
 #include "MP_CRASHCharacter.generated.h"
 
+class UMP_HealthComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
@@ -133,5 +134,8 @@ private:
 
 	UFUNCTION()
 	void OnGeneric();
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UMP_HealthComponent> HealthComponent;
 };
 
