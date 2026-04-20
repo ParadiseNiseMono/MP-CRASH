@@ -141,5 +141,12 @@ private:
 
 	UFUNCTION(Client, Reliable)
 	void Client_PrintMessage(const FString& Message);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void NetMulticast_PrintMessage(const FString& Message);
+
+	FTimerHandle RpcDelayTimer;
+
+	void OnRpcDelayTimer();
 };
 

@@ -101,10 +101,7 @@ void AMP_CRASHCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	if (HasAuthority())
-	{
-		Client_PrintMessage(TEXT("This should run on the client"));
-	}
+	GetWorldTimerManager().SetTimer(RpcDelayTimer, this, &ThisClass::OnRpcDelayTimer, 4.0f, false);
 }
 
 
@@ -211,6 +208,28 @@ void AMP_CRASHCharacter::OnGeneric()
 	HealthComponent->SetRepNotifyHealth(!HealthComponent->GetRepNotifyHealth());
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("bRepNotifyHealth = %d"), HealthComponent->GetRepNotifyHealth()));
+}
+
+void AMP_CRASHCharacter::OnRpcDelayTimer()
+{
+	if (HasAuthority())
+	{
+		NetMulticast_PrintMessage("NetMulticast");
+	}
+}
+
+void AMP_CRASHCharacter::NetMulticast_PrintMessage_Implementation(const FString& Message)
+{
+	FString PrintMessage = HasAuthority() ? TEXT("Server: ") : TEXT("Client: ");
+
+	PrintMessage += Message;
+	
+	GEngine->AddOnScreenDebugMessage(
+		-1,
+		5.f,
+		FColor::Green,
+		PrintMessage
+		);
 }
 
 void AMP_CRASHCharacter::Client_PrintMessage_Implementation(const FString& Message)
