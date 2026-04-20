@@ -97,6 +97,17 @@ void AMP_CRASHCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	}
 }
 
+void AMP_CRASHCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (HasAuthority())
+	{
+		Client_PrintMessage(TEXT("This should run on the client"));
+	}
+}
+
+
 void AMP_CRASHCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
@@ -200,4 +211,18 @@ void AMP_CRASHCharacter::OnGeneric()
 	HealthComponent->SetRepNotifyHealth(!HealthComponent->GetRepNotifyHealth());
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("bRepNotifyHealth = %d"), HealthComponent->GetRepNotifyHealth()));
+}
+
+void AMP_CRASHCharacter::Client_PrintMessage_Implementation(const FString& Message)
+{
+	FString PrintMessage = HasAuthority() ? TEXT("Server: ") : TEXT("Client: ");
+
+	PrintMessage += Message;
+	
+	GEngine->AddOnScreenDebugMessage(
+		-1,
+		5.f,
+		FColor::Yellow,
+		PrintMessage
+		);
 }

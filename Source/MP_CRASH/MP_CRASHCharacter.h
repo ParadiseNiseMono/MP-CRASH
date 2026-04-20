@@ -72,6 +72,7 @@ protected:
 	/** Initialize input action bindings */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void PossessedBy(AController* NewController) override;
 protected:
 
 	/** Called for movement input */
@@ -137,5 +138,8 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UMP_HealthComponent> HealthComponent;
+
+	UFUNCTION(Client, Reliable)
+	void Client_PrintMessage(const FString& Message);
 };
 
