@@ -204,10 +204,31 @@ void AMP_CRASHCharacter::OnGeneric()
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("bReplicatePickupCount = %d"), bReplicatePickupCount));*/
 
-	if (!IsValid(HealthComponent)) return;
+	/*if (!IsValid(HealthComponent)) return;
 	HealthComponent->SetRepNotifyHealth(!HealthComponent->GetRepNotifyHealth());
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("bRepNotifyHealth = %d"), HealthComponent->GetRepNotifyHealth()));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("bRepNotifyHealth = %d"), HealthComponent->GetRepNotifyHealth()));*/
+
+	Server_PrintMessage("");
+}
+
+void AMP_CRASHCharacter::Server_PrintMessage_Implementation(const FString& Message)
+{
+	FString PrintMessage = HasAuthority() ? TEXT("Server: ") : TEXT("Client: ");
+
+	PrintMessage += Message;
+	
+	GEngine->AddOnScreenDebugMessage(
+		-1,
+		5.f,
+		FColor::Cyan,
+		PrintMessage
+		);
+}
+
+bool AMP_CRASHCharacter::Server_PrintMessage_Validate(const FString& Message)
+{
+	return !Message.IsEmpty();
 }
 
 void AMP_CRASHCharacter::OnRpcDelayTimer()

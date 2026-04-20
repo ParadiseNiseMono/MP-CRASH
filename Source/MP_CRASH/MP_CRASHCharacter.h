@@ -142,6 +142,9 @@ private:
 	UFUNCTION(Client, Reliable)
 	void Client_PrintMessage(const FString& Message);
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_PrintMessage(const FString& Message);
+
 	UFUNCTION(NetMulticast, Reliable)
 	void NetMulticast_PrintMessage(const FString& Message);
 
