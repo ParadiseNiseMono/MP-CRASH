@@ -5,9 +5,19 @@
 
 #include "Net/UnrealNetwork.h"
 
+void AMP_PlayerState::SetNumPickups(float Amount)
+{
+	NumPickups = Amount;
+}
+
 void AMP_PlayerState::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ThisClass, NumPickups);
+}
+
+void AMP_PlayerState::OnRep_NumPickups()
+{
+	OnPickupCountChanged.Broadcast(NumPickups);
 }

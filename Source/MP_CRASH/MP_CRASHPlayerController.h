@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "MP_CRASHPlayerController.generated.h"
 
+class UMP_PickupWidget;
 class UInputMappingContext;
 class UUserWidget;
 
@@ -41,4 +42,14 @@ protected:
 	/** Input mapping context setup */
 	virtual void SetupInputComponent() override;
 
+	virtual void OnRep_PlayerState() override;
+
+	UPROPERTY(EditDefaultsOnly, Category="Widget")
+	TSubclassOf<UMP_PickupWidget> PickupWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UMP_PickupWidget> PickupWidget;
+
+	UFUNCTION()
+	void OnPickupCountChanged(int32 NewPickupCount);
 };

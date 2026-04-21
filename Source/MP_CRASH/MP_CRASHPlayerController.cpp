@@ -7,6 +7,8 @@
 #include "InputMappingContext.h"
 #include "Blueprint/UserWidget.h"
 #include "MP_CRASH.h"
+#include "PlayerState/MP_PlayerState.h"
+#include "Widgets/MP_PickupWidget.h"
 #include "Widgets/Input/SVirtualJoystick.h"
 
 void AMP_CRASHPlayerController::BeginPlay()
@@ -57,5 +59,36 @@ void AMP_CRASHPlayerController::SetupInputComponent()
 				}
 			}
 		}
+	}
+}
+
+void AMP_CRASHPlayerController::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	if (AMP_PlayerState* MP_PlayerState = Cast<AMP_PlayerState>(PlayerState))
+	{
+		if (PickupWidgetClass != nullptr)
+		{
+			PickupWidget = CreateWidget<UMP_PickupWidget>(this, PickupWidgetClass);
+			
+			if (PickupWidget != nullptr)
+			{
+				PickupWidget->AddToViewport();
+				MP_PlayerState->OnPickupCountChanged.AddDynamic(this, &ThisClass::OnPickupCountChanged);
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PickupWidgetClass is null! Please set it in the Blueprint."));
+		}
+	}
+}
+
+void AMP_CRASHPlayerController::OnPickupCountChanged(int32 NewPickupCount)
+{
+	if (IsValid(PickupWidget))
+	{
+		PickupWidget->SetPickupCountText(FText::FromString(FString::FromInt(NewPickupCount)));
 	}
 }

@@ -69,6 +69,7 @@ void AMP_CRASHCharacter::GrantArmor_Implementation(float ArmorAmount)
 
 void AMP_CRASHCharacter::PickUpItem_Implementation()
 {
+	if (!HasAuthority()) return;
 	PickupCount++;
 
 	if (!IsValid(HealthComponent)) return;
@@ -78,7 +79,7 @@ void AMP_CRASHCharacter::PickUpItem_Implementation()
 
 	if (IsValid(MP_PlayerState))
 	{
-		MP_PlayerState->IncreaseNumPickups();
+		MP_PlayerState->SetNumPickups(MP_PlayerState->GetNumPickups() + 1);
 	}
 }
 
