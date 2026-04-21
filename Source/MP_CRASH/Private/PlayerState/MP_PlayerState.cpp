@@ -8,6 +8,11 @@
 void AMP_PlayerState::SetNumPickups(float Amount)
 {
 	NumPickups = Amount;
+
+	if (HasAuthority())
+	{
+		OnPickupCountChanged.Broadcast(NumPickups);
+	}
 }
 
 void AMP_PlayerState::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const

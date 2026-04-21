@@ -33,6 +33,30 @@ void AMP_CRASHPlayerController::BeginPlay()
 		}
 
 	}
+	if (!IsLocalController()) return;
+
+	if (HasAuthority())
+	{
+		if (AMP_PlayerState* MP_PlayerState = Cast<AMP_PlayerState>(PlayerState))
+		{
+			MP_PlayerState->OnPickupCountChanged.AddDynamic(this, &ThisClass::OnPickupCountChanged);
+		}
+	}
+
+	if (PickupWidgetClass != nullptr)
+	{
+		PickupWidget = CreateWidget<UMP_PickupWidget>(this, PickupWidgetClass);
+			
+		if (PickupWidget != nullptr)
+		{
+			PickupWidget->AddToViewport();
+				
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PickupWidgetClass is null! Please set it in the Blueprint."));
+	}
 }
 
 void AMP_CRASHPlayerController::SetupInputComponent()
@@ -68,20 +92,7 @@ void AMP_CRASHPlayerController::OnRep_PlayerState()
 
 	if (AMP_PlayerState* MP_PlayerState = Cast<AMP_PlayerState>(PlayerState))
 	{
-		if (PickupWidgetClass != nullptr)
-		{
-			PickupWidget = CreateWidget<UMP_PickupWidget>(this, PickupWidgetClass);
-			
-			if (PickupWidget != nullptr)
-			{
-				PickupWidget->AddToViewport();
-				MP_PlayerState->OnPickupCountChanged.AddDynamic(this, &ThisClass::OnPickupCountChanged);
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("PickupWidgetClass is null! Please set it in the Blueprint."));
-		}
+		MP_PlayerState->OnPickupCountChanged.AddDynamic(this, &ThisClass::OnPickupCountChanged);
 	}
 }
 
